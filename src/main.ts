@@ -5,10 +5,6 @@ const game = new Engine({
   height: 600, //colocando o tamanho do nosso game
 });
 
-	const sound = new Sound('./music/Corinthians.mp4');
-	const loader = new Loader([sound]);
-	await game.start(loader);
-
 // 2 - Criar barra do player
 //todo objeto,npc,player aqui no excalibur é actor, depois que você digitou o actor dê um enter que ele irá fazer o import automático e depois coloca o parenteses
 const barra = new Actor({
@@ -43,6 +39,21 @@ const bolinha = new Actor({
 });
 
 bolinha.body.collisionType = CollisionType.Passive; //não reage a colisão mas detecta um tipo de colisão
+
+const coresBolinha = [
+  Color.Black,
+  Color.Chartreuse,
+  Color.Cyan,
+  Color.Green,
+  Color.Magenta,
+  Color.Orange,
+  Color.Red,
+  Color.Rose,
+  Color.White,
+  Color.Yellow,
+]
+
+let numeroCores = coresBolinha.length
 
 //CollisionType.Active //A bolinha reage a colisão
 
@@ -146,6 +157,13 @@ pos: vec(600, 500)
 
 game.add(textoPontos)
 
+const sound = new Sound('./music/Corinthians.mp4');
+const gameOverSound = new Sound('./music/eu-tenteiiiiiiiii.mp3')
+const gameSucessed = new Sound('./music/o-impossivel-aconteceu.mp3')
+
+const loader = new Loader([sound, gameOverSound, gameSucessed]);
+await game.start(loader);
+
 // const textoPontos = new Text({
 // text: "Pontos: ",
 // font: new Font({size: 20, color: Color.LightGray})
@@ -175,6 +193,13 @@ let colidindo: boolean = false // vai começar como falso para mostrar que não 
     pontos++
     //Atualiza valor do placar (TextosPontos)
 textoPontos.text = pontos.toString()
+
+    // Se acabar os blocos, mostrar mensagem de vitória
+    if (pontos == 15){
+      alert("Parabens nobre você venceu!!!👌")
+
+      window.location.reload()
+    }
   }
   // Rebater a bolinha Inverter as direções x e y 
 let interseccao = event.contact.mtv.normalize()
@@ -197,8 +222,14 @@ bolinha.on("collisionend" , () =>{
 })
 
 bolinha.on("exitviewport", () => {
-  alert("Faliceuu!😏")
-  window.location.reload()
+  //Executa som de game Over
+  gameOverSound.play(1)
+  .then(() => {
+    alert("Faliceuu!😏")
+    window.location.reload()
+  })
+
+
 })
 
 //iniciando o game
